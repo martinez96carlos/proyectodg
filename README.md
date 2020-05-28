@@ -1,4 +1,4 @@
-# proyectodg
+# waste_collection_app
 
 A new Flutter project.
 

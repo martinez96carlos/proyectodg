@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "816351704033",
+    "firebase_url": "https://proyectodgucb.firebaseio.com",
+    "project_id": "proyectodgucb",
+    "storage_bucket": "proyectodgucb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816351704033:android:dde4d7d743f1d217a158a0",
+        "android_client_info": {
+          "package_name": "com.example.waste_collection_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816351704033-k89qoiv50l9cjtakv1h0eq7laeu9qnhm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.waste_collection_app",
+            "certificate_hash": "cec345522b40558d1c32ed2d7165adcf0ae63fae"
+          }
+        },
+        {
+          "client_id": "816351704033-q3bqs24inc68a43hh9mgvfrl041v4skd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsa_wJTO-dclbTgoDOPQ8nYu4YdWq5Mgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816351704033-q3bqs24inc68a43hh9mgvfrl041v4skd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
