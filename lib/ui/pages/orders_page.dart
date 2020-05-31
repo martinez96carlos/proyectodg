@@ -56,6 +56,23 @@ class _Body extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 8.0),
       );
 
+  Widget _updateOrderRate(Alignment alignment) => Container(
+        padding: EdgeInsets.all(8.0),
+        child: Align(
+            alignment: alignment,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.star, color: Colors.white),
+                Text('Calificación', style: TextStyle(color: Colors.white))
+              ],
+            )),
+        decoration: BoxDecoration(
+            color: Colors.orangeAccent,
+            borderRadius: BorderRadius.circular(8.0)),
+        margin: EdgeInsets.symmetric(vertical: 8.0),
+      );
+
   @override
   Widget build(BuildContext context) {
     final userProviders = Provider.of<UserProviders>(context);
@@ -74,13 +91,21 @@ class _Body extends StatelessWidget {
                           orderProviders.orders[pointer].generatorId &&
                       orderProviders.orders[pointer].state != 3) {
                     return Dismissible(
-                      confirmDismiss: (direction) => alerts.cancelOrderAlert(
-                          direction,
-                          context,
-                          orderProviders.orders[pointer].id),
+                      confirmDismiss: (direction) async {
+                        if (direction == DismissDirection.endToStart) {
+                          return await alerts.cancelOrderAlert(direction,
+                              context, orderProviders.orders[pointer].id);
+                        } else {
+                          orderProviders.orderActive =
+                              orderProviders.orders[pointer];
+                          print(orderProviders.orderActive.state);
+                          return await alerts.updateRateAlert(direction,
+                              context, orderProviders.orders[pointer].id);
+                        }
+                      },
                       secondaryBackground:
                           _cancelOrderText(Alignment.centerRight),
-                      background: _cancelOrderText(Alignment.centerLeft),
+                      background: _updateOrderRate(Alignment.centerLeft),
                       key: UniqueKey(),
                       child: CardOrder(
                           order: orderProviders.orders[pointer],

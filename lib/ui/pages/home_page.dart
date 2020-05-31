@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:waste_collection_app/data/constant.dart' as constant;
+import 'package:waste_collection_app/data/database/dbHelper.dart';
 import 'package:waste_collection_app/data/providers/controllers_provider.dart';
 import 'package:waste_collection_app/data/providers/user_providers.dart';
 import 'package:waste_collection_app/logic/orders_logic.dart';
+import 'package:waste_collection_app/ui/pages/charts_page.dart';
 import 'package:waste_collection_app/ui/pages/guide.dart';
 import 'package:waste_collection_app/ui/pages/login_page.dart';
 import 'package:waste_collection_app/ui/pages/orders_page.dart';
@@ -22,7 +24,7 @@ class Home extends StatelessWidget {
     ProfilePage(),
     SearchPage(),
     OrdersPage(),
-    Container(),
+    ChartsPage(),
   ];
 
   final List<Widget> pagesGenerator = [
@@ -135,7 +137,7 @@ class Home extends StatelessWidget {
                     },
                   )
                 : Container(),
-            /*IconButton(
+            IconButton(
               icon: Icon(Icons.delete),
               onPressed: () async {
                 var dbHelper = DBHelper();
@@ -143,7 +145,7 @@ class Home extends StatelessWidget {
                 await dbHelper.cleanDB();
                 controllers.isLoading = false;
               },
-            )*/
+            )
           ],
           leading: IconButton(
               icon: Icon(Icons.menu),

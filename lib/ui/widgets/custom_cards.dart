@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waste_collection_app/data/providers/controllers_provider.dart';
 import 'package:waste_collection_app/data/providers/orders_provider.dart';
+import 'package:waste_collection_app/data/providers/recolections_provider.dart';
 import 'package:waste_collection_app/data/providers/user_providers.dart';
 import 'package:waste_collection_app/logic/orders_logic.dart' as orderL;
 import 'package:waste_collection_app/models/orders.dart';
@@ -17,15 +18,19 @@ class CardOrder extends StatelessWidget {
     final orderProvider = Provider.of<OrdersProviders>(context);
     final controllers = Provider.of<ControllersProvider>(context);
     final user = Provider.of<UserProviders>(context);
+    final recolections = Provider.of<RecolectionsProvider>(context);
     return InkWell(
       onTap: () async {
         if (user.userType) {
           controllers.isLoading = true;
           if (await request.getRecolections(
-              id: order.id.toString(), context: context)) {
-            controllers.isLoading = false;
-            orderProvider.orderActive = order;
-            Navigator.pushNamed(mainContext, 'order_details');
+              id: order.id.toString(), context: mainContext)) {
+            if (await request.getRateOrder(
+                id: order.id.toString(), context: mainContext)) {
+              controllers.isLoading = false;
+              orderProvider.orderActive = order;
+              Navigator.pushNamed(mainContext, 'order_details');
+            }
           }
         } else {
           if (!search) {
@@ -38,6 +43,7 @@ class CardOrder extends StatelessWidget {
               Navigator.pushNamed(context, 'order_details');
             }
           } else {
+            recolections.recolections = [];
             orderProvider.orderActive = order;
             Navigator.pushNamed(context, 'order_details');
           }

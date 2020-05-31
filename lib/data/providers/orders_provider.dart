@@ -48,10 +48,11 @@ class OrdersProviders with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeRate(int value, int id) {
+  void changeRate(int value, int id, int status) {
     _orders.forEach((element) {
       if (element.id == id) {
         element.rate = value;
+        element.state = status;
       }
     });
     notifyListeners();
@@ -64,6 +65,11 @@ class OrdersProviders with ChangeNotifier {
 
   void changeRateOrderActive(int value) {
     _orderActive.rate = value;
+    notifyListeners();
+  }
+
+  void changeRecolectionRateOrder(int value) {
+    _orderActive.recolectionRate = value;
     notifyListeners();
   }
 

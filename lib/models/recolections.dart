@@ -5,6 +5,7 @@ class Recolection {
   int orderId;
   int id;
   int idSolid;
+  int rate;
 
   Recolection(
       {this.nameRecolector = "",
@@ -12,14 +13,16 @@ class Recolection {
       this.idSolid = 0,
       this.orderId = 0,
       this.weight = 0.0,
-      this.id = 0});
+      this.id = 0,
+      this.rate = 0});
 
   factory Recolection.fromJson(Map<String, dynamic> json) {
     return Recolection(
         id: json['id'],
         nameRecolection: json['residuo'],
-        weight: json['peso_kg']/1,
-        orderId: json['order_id']);
+        weight: json['peso_kg'] / 1,
+        orderId: json['order_id'],
+        rate: json['order_rate']);
   }
 
   Recolection.fromMap(Map map) {
@@ -28,6 +31,7 @@ class Recolection {
     this.weight = map['weight'] / 1;
     this.id = map['id'];
     this.nameRecolection = map['nameRecolection'];
+    this.rate = map['orderRate'];
   }
 
   Map<String, dynamic> toJson() {

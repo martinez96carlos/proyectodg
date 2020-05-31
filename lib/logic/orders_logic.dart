@@ -52,6 +52,13 @@ String dateText(String dateReceived) {
   }
 }
 
+String changeDate(int date) {
+  if (date < 10) {
+    return "0${date.toString()}";
+  }
+  return date.toString();
+}
+
 void addDateTimeToRegisterOrder(BuildContext context) async {
   final order = Provider.of<OrdersProviders>(context, listen: false);
   try {
@@ -64,7 +71,7 @@ void addDateTimeToRegisterOrder(BuildContext context) async {
       final TimeOfDay time =
           await showTimePicker(context: context, initialTime: TimeOfDay.now());
       order.changeDateTime(
-          "${date.year.toString()}-${date.month.toString()}-${date.day.toString()}" +
+          "${date.year.toString()}-${changeDate(date.month)}-${changeDate(date.day)}" +
               " ${time.hour.toString()}:${time.minute.toString()}");
       print(order.orderActive.dateTime);
     }
@@ -91,4 +98,3 @@ Future<void> getOrdersGenerator(BuildContext context, String id) async {
 Future<void> getOrdersRecolector(BuildContext context, String id) async {
   await request.getOrdersByRecolector(id: id, context: context);
 }
-

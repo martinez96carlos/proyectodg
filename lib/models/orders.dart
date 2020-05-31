@@ -10,6 +10,7 @@ class Order {
   int rate;
   int generatorId;
   int recolectorId;
+  int recolectionRate;
 
   Order({
     this.dateTime = "",
@@ -23,6 +24,7 @@ class Order {
     this.rate = 0,
     this.generatorId = 0,
     this.recolectorId = 0,
+    this.recolectionRate = 0,
   });
 
   Order.fromMap(Map map) {
@@ -37,6 +39,7 @@ class Order {
     this.rate = map['rate'];
     this.recolectorId = map['recolectorId'];
     this.generatorId = map['generatorId'];
+    this.recolectionRate = map['recolectionRate'];
   }
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -52,21 +55,23 @@ class Order {
             "${json['generator_first_name']} ${json['generator_first_lastname']}",
         generatorId: json['generator_id'] ?? 0,
         recolectorId: json['recolector_id'] ?? 0,
-        phoneGenerator: json['generator_phone'] ?? "");
+        phoneGenerator: json['generator_phone'] ?? "",
+        recolectionRate: json['order_recolection_rate'] ?? 0);
   }
 
   void mostrar() {
-    print("details: "+ this.details);
-    print("id: "+ this.id.toString());
-    print("image: "+ this.imageLink);
-    print("lat: "+ this.latLng);
-    print("generator: "+ this.nameGenerator);
-    print("phone: "+ this.phoneGenerator);
-    print("rate: "+ this.rate.toString());
-    print("state: "+ this.state.toString());
-    print("date: "+ this.dateTime);
-    print("generator id: "+ this.generatorId.toString());
-    print("recolector id: "+ this.recolectorId.toString());
+    print("details: " + this.details);
+    print("id: " + this.id.toString());
+    print("image: " + this.imageLink);
+    print("lat: " + this.latLng);
+    print("generator: " + this.nameGenerator);
+    print("phone: " + this.phoneGenerator);
+    print("rate: " + this.rate.toString());
+    print("state: " + this.state.toString());
+    print("date: " + this.dateTime);
+    print("generator id: " + this.generatorId.toString());
+    print("recolector id: " + this.recolectorId.toString());
+    print("recolection rate:" + this.recolectionRate.toString());
   }
 }
 

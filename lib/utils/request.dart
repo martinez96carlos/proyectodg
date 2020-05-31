@@ -618,6 +618,45 @@ Future<bool> cancelPick(
   return false;
 }
 
+Future<bool> updateRateRecolection(
+    {@required int orderId,
+    @required int rate,
+    @required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    try {
+      var response = await http
+          .put(Uri.encodeFull("${constant.urlBase}/ratere"), headers: {
+        "content-type": "application/json",
+        "order_id": orderId.toString(),
+        "recolection_rate": rate.toString()
+      });
+      print("decode: " + response.body);
+      Map<String, dynamic> decode = json.decode(response.body);
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text(decode['status']),
+      ));
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    orderDetatilsScaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
 Future<bool> sendRecolections(
     {@required String id,
     @required dynamic recolections,
@@ -681,6 +720,43 @@ Future<bool> getRecolections(
       List<Recolection> _recolections =
           data.map((data) => Recolection.fromJson(data)).toList();
       recolectionProvider.recolections = _recolections;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getRateOrder(
+    {@required String id, @required BuildContext context}) async {
+  final db = DBHelper();
+  if (await configure.checkInternet()) {
+    final order = Provider.of<OrdersProviders>(context, listen: false);
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/rates/$id"))
+          .timeout(Duration(seconds: 5));
+      print(response.body);
+      Map<String, dynamic> data = json.decode(response.body);
+      order.changeRateOrderActive(data['order_rate']);
+      order.changeRate(data['order_rate'], int.parse(id), 2);
+      await db.updateStatusOrder(order.orderActive.id, 2);
+      await db.updateRateOrder(order.orderActive.id, order.orderActive.rate);
       return true;
     } on TimeoutException catch (e) {
       print('Excepcion: ' + e.toString());

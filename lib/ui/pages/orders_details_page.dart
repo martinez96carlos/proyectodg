@@ -169,8 +169,10 @@ class _Body extends StatelessWidget {
                                         recolections: jsonList.toString(),
                                         orderRate: order.orderActive.rate,
                                         context: context)) {
+                                      await db.updateStatusOrder(
+                                          order.orderActive.id, 2);
                                       order.changeRate(order.orderActive.rate,
-                                          order.orderActive.id);
+                                          order.orderActive.id, 2);
                                       await db.updateRateOrder(
                                           order.orderActive.id,
                                           order.orderActive.rate);
@@ -324,6 +326,31 @@ class _GeneralInformation extends StatelessWidget {
     );
   }
 
+  Widget recolectionRate(BuildContext context) {
+    final orderProvider = Provider.of<OrdersProviders>(context);
+    return Column(
+      children: <Widget>[
+        Align(
+            alignment: Alignment.center,
+            child: titles('Calidad de la recolección', context)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            for (int i = 0;
+                i < orderProvider.orderActive.recolectionRate ~/ 1;
+                i++)
+              Icon(Icons.star, color: Theme.of(context).primaryColor),
+            if (orderProvider.orderActive.recolectionRate != 5.0)
+              for (int i = 1;
+                  i <= 5 - (orderProvider.orderActive.recolectionRate % 5);
+                  i++)
+                Icon(Icons.star_border, color: Theme.of(context).primaryColor)
+          ],
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProviders>(context);
@@ -365,6 +392,8 @@ class _GeneralInformation extends StatelessWidget {
           Text(order.details,
               style: TextStyle(fontSize: 16.0, color: Colors.grey[600])),
           SizedBox(height: 16.0),
+          order.recolectionRate != 0 ? recolectionRate(context) : Container(),
+          order.recolectionRate != 0 ? SizedBox(height: 16.0) : Container(),
         ],
       )),
     );

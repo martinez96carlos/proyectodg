@@ -66,6 +66,100 @@ Future<bool> cancelOrderAlert(
       false;
 }
 
+class Rate extends StatefulWidget {
+  @override
+  _RateState createState() => _RateState();
+}
+
+class _RateState extends State<Rate> {
+  int star;
+
+  @override
+  void initState() {
+    super.initState();
+    star = 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final order = Provider.of<OrdersProviders>(context, listen: false);
+    return Material(
+      color: Colors.transparent,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          for (int i = 0; i < star ~/ 1; i++)
+            InkWell(
+                onTap: () {
+                  setState(() {
+                    star = i + 1;
+                    order.orderActive.recolectionRate = star;
+                    print(order.orderActive.recolectionRate);
+                  });
+                },
+                child: Icon(Icons.star, color: Theme.of(context).primaryColor)),
+          if (star != 5)
+            for (int i = 1; i <= 5 - (star % 5); i++)
+              InkWell(
+                  onTap: () {
+                    setState(() {
+                      star = i + star;
+                      order.orderActive.recolectionRate = star;
+                      print(order.orderActive.recolectionRate);
+                    });
+                  },
+                  child: Icon(Icons.star_border,
+                      color: Theme.of(context).primaryColor))
+        ],
+      ),
+    );
+  }
+}
+
+Future<bool> updateRateAlert(
+    DismissDirection direction, BuildContext context, int id) async {
+  final controllers = Provider.of<ControllersProvider>(context, listen: false);
+  final order = Provider.of<OrdersProviders>(context, listen: false);
+  return await showCupertinoDialog<bool>(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text('Mensaje'),
+          content: Column(
+            children: <Widget>[
+              Text(order.orderActive.state == 2
+                  ? "Por favor califica la recolección de esta orden"
+                  : "Aun no puedes calificar esta recolección"),
+              order.orderActive.state == 2 ? Rate() : Container(),
+            ],
+          ),
+          actions: <Widget>[
+            order.orderActive.state == 2
+                ? CupertinoDialogAction(
+                    textStyle: TextStyle(color: Colors.black),
+                    child: Text('Cancelar'),
+                    onPressed: () => Navigator.of(context).pop(false),
+                  )
+                : Container(),
+            CupertinoDialogAction(
+              child: Text(order.orderActive.state == 2 ? "Enviar" : "Cerrar"),
+              onPressed: () async {
+                Navigator.of(context).pop(false);
+                if (order.orderActive.state == 2) {
+                  controllers.isLoading = true;
+                  if (await request.updateRateRecolection(
+                      orderId: id,
+                      rate: order.orderActive.recolectionRate,
+                      context: context)) {}
+                  controllers.isLoading = false;
+                }
+              },
+            )
+          ],
+        ),
+      ) ??
+      false;
+}
+
 Future<bool> createOrderAlert(BuildContext context) async {
   final controller = Provider.of<ControllersProvider>(context, listen: false);
   final user = Provider.of<UserProviders>(context, listen: false);

@@ -186,6 +186,13 @@ class __BodyState extends State<_Body> {
     }
   }
 
+  String changeDate(int date) {
+    if (date < 10) {
+      return "0${date.toString()}";
+    }
+    return date.toString();
+  }
+
   @override
   void initState() {
     groupValue = 0;
@@ -327,7 +334,7 @@ class __BodyState extends State<_Body> {
                 format: _format,
                 onChanged: (value) => widget.generator
                     ? userGenerator.date =
-                        "${value.year}-${value.month}-${value.day}"
+                        "${value.year}-${changeDate(value.month)}-${changeDate(value.day)}"
                     : userRecolector.date =
                         "${value.year}-${value.month}-${value.day}",
                 focusNode: _focus[2],

@@ -29,9 +29,17 @@
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
+.flutter-plugins
 
 # Web related
 lib/generated_plugin_registrant.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages

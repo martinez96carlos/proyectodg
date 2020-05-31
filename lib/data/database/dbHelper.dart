@@ -20,7 +20,7 @@ class DBHelper {
   //la creamos
   void onCreate(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE Orders(dateTime TEXT, latLng TEXT, imageLink TEXT, details TEXT, nameGenerator TEXT, phoneGenerator TEXT, id INTEGER, state INTEGER, rate INTEGER, generatorId INTEGER, recolectorId INTEGER, PRIMARY KEY(id))');
+        'CREATE TABLE Orders(dateTime TEXT, latLng TEXT, imageLink TEXT, details TEXT, nameGenerator TEXT, phoneGenerator TEXT, id INTEGER, state INTEGER, rate INTEGER, generatorId INTEGER, recolectorId INTEGER,recolectionRate INTEGER, PRIMARY KEY(id))');
     await db.execute(
         'CREATE TABLE Recolections(nameRecolector TEXT, weight TEXT, orderId INTEGER, id INTEGER, nameRecolection TEXT, PRIMARY KEY(id))');
   }
@@ -41,7 +41,7 @@ class DBHelper {
     var dbReady = await db;
     try {
       return await dbReady.rawInsert(
-          "INSERT INTO Orders(dateTime, latLng, imageLink, details, nameGenerator, phoneGenerator, id, state, rate, generatorId, recolectorId) VALUES ("
+          "INSERT INTO Orders(dateTime, latLng, imageLink, details, nameGenerator, phoneGenerator, id, state, rate, generatorId, recolectionRate, recolectorId) VALUES ("
           "'${order.dateTime}',"
           "'${order.latLng}',"
           "'${order.imageLink}',"
@@ -52,6 +52,7 @@ class DBHelper {
           "'${order.state}',"
           "'${order.rate}',"
           "'${order.generatorId}',"
+          "'${order.recolectionRate}',"
           "'${order.recolectorId}')");
     } catch (e) {
       print("error:" + e.toString());
@@ -131,6 +132,7 @@ class DBHelper {
           rate: list[i]["rate"],
           state: list[i]["state"],
           generatorId: list[i]["generatorId"],
+          recolectionRate: list[i]['recolectionRate'],
           recolectorId: list[i]["recolectorId"]));
     }
     return orders;
