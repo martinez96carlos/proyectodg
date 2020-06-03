@@ -72,7 +72,7 @@ void addDateTimeToRegisterOrder(BuildContext context) async {
           await showTimePicker(context: context, initialTime: TimeOfDay.now());
       order.changeDateTime(
           "${date.year.toString()}-${changeDate(date.month)}-${changeDate(date.day)}" +
-              " ${time.hour.toString()}:${time.minute.toString()}");
+              " ${changeDate(time.hour)}:${changeDate(time.minute)}");
       print(order.orderActive.dateTime);
     }
   } catch (e) {

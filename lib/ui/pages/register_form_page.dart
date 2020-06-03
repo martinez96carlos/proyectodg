@@ -6,6 +6,7 @@ import 'package:waste_collection_app/data/providers/user_providers.dart';
 import 'package:waste_collection_app/logic/login_logic.dart' as login;
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:waste_collection_app/models/user.dart';
 import 'package:waste_collection_app/ui/widgets/configure_widgets.dart'
     as configure;
 import 'package:waste_collection_app/ui/widgets/custom_buttons.dart' as buttons;
@@ -106,10 +107,11 @@ class __BodyState extends State<_Body> {
   }
 
   Future<void> _register() async {
-    final userProvider = Provider.of<UserProviders>(context);
+    final userProvider = Provider.of<UserProviders>(context, listen: false);
     final userGenerator = userProvider.generatorUser;
     final userRecolector = userProvider.recolectorUser;
-    final controllers = Provider.of<ControllersProvider>(context);
+    final controllers =
+        Provider.of<ControllersProvider>(context, listen: false);
     if (widget.generator &&
         userGenerator.password == userGenerator.passwordConfirm) {
       if (await request.registerGenerator(
@@ -149,13 +151,28 @@ class __BodyState extends State<_Body> {
   }
 
   Future<void> _edit() async {
-    final userProvider = Provider.of<UserProviders>(context);
+    final userProvider = Provider.of<UserProviders>(context, listen: false);
     final userGenerator = userProvider.generatorUser;
     final userRecolector = userProvider.recolectorUser;
-    final controllers = Provider.of<ControllersProvider>(context);
+    final controllers =
+        Provider.of<ControllersProvider>(context, listen: false);
     if (widget.generator &&
         userGenerator.password == userGenerator.passwordConfirm) {
       if (await request.editGenerator(user: userGenerator, context: context)) {
+        User user = User(
+            date: userGenerator.date,
+            rate: userGenerator.rate,
+            id: userGenerator.id,
+            secondName: userGenerator.secondName,
+            dni: userGenerator.dni,
+            secondLastName: userGenerator.secondLastName,
+            email: userGenerator.email,
+            gender: userGenerator.gender,
+            imageLink: userGenerator.imageLink,
+            lastName: userGenerator.lastName,
+            name: userGenerator.name,
+            phone: userGenerator.phone);
+        userProvider.user = user;
         controllers.isLoading = false;
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Datos actualizados correctamente'),
@@ -170,6 +187,20 @@ class __BodyState extends State<_Body> {
         userRecolector.password == userRecolector.passwordConfirm) {
       if (await request.editRecolector(
           user: userRecolector, context: context)) {
+        User user = User(
+            date: userRecolector.date,
+            rate: userRecolector.rate,
+            id: userRecolector.id,
+            secondName: userRecolector.secondName,
+            dni: userRecolector.dni,
+            secondLastName: userRecolector.secondLastName,
+            email: userRecolector.email,
+            gender: userRecolector.gender,
+            imageLink: userRecolector.imageLink,
+            lastName: userRecolector.lastName,
+            name: userRecolector.name,
+            phone: userRecolector.phone);
+        userProvider.user = user;
         controllers.isLoading = false;
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text('Datos actualizados correctamente'),
@@ -191,6 +222,25 @@ class __BodyState extends State<_Body> {
       return "0${date.toString()}";
     }
     return date.toString();
+  }
+
+  bool _validateAll() {
+    try {
+      if (formRegisterKey.currentState.validate()) {
+        return true;
+      } else {
+        scaffoldRegisterKey.currentState.showSnackBar(SnackBar(
+          content: Text('Por favor llena los campos vacios'),
+        ));
+        return false;
+      }
+    } catch (e) {
+      scaffoldRegisterKey.currentState.showSnackBar(SnackBar(
+        content: Text(
+            'Ah ocurrido un error, vuelva a intentar, si el error persiste, reporte el error por favor'),
+      ));
+      return false;
+    }
   }
 
   @override
@@ -251,7 +301,7 @@ class __BodyState extends State<_Body> {
             child: TextFormField(
               initialValue: secondNameController.text,
               textInputAction: TextInputAction.next,
-              validator: (value) => login.validate(value, "segundo nombre"),
+              //validator: (value) => login.validate(value, "segundo nombre"),
               onChanged: (value) {
                 setState(() {
                   secondNameController.text = value;
@@ -304,7 +354,7 @@ class __BodyState extends State<_Body> {
             child: TextFormField(
               initialValue: secondLastNameController.text,
               textInputAction: TextInputAction.next,
-              validator: (value) => login.validate(value, "segundo apellido"),
+              //validator: (value) => login.validate(value, "segundo apellido"),
               onChanged: (value) {
                 setState(() {
                   secondLastNameController.text = value;
@@ -606,13 +656,15 @@ class __BodyState extends State<_Body> {
           buttons.BoxButton(
               title: widget.edit ? "EDITAR" : "REGISTRARSE",
               function: () async {
-                controllers.isLoading = true;
-                if (widget.edit) {
-                  await _edit();
-                } else {
-                  await _register();
+                if (_validateAll()) {
+                  controllers.isLoading = true;
+                  if (widget.edit) {
+                    await _edit();
+                  } else {
+                    await _register();
+                  }
+                  controllers.isLoading = false;
                 }
-                controllers.isLoading = false;
               },
               color: Theme.of(context).primaryColor),
           SizedBox(height: 12.0),

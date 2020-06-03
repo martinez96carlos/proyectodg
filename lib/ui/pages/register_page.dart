@@ -82,7 +82,7 @@ class _RegisterButtons extends StatelessWidget {
         buttons.BoxButton(
             function: () {
               userProvider.user = User();
-              userProvider.generatorUser = GeneratorUser();
+              userProvider.recolectorUser = RecolectorUser();
               Navigator.pushNamed(context, 'register_form',
                   arguments: RegisterFormArguments());
             },

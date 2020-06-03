@@ -48,4 +48,12 @@ class ControllersProvider with ChangeNotifier {
     _stillCreateOrder = value;
     notifyListeners();
   }
+
+  bool _chartsRequest = true;
+
+  bool get chartsRequest => _chartsRequest;
+  set chartsRequest(bool value) {
+    _chartsRequest = value;
+    notifyListeners();
+  }
 }

@@ -42,6 +42,11 @@ flutter:
     - assets/bag.svg
     - assets/profession.svg
     - assets/ecology.svg
+    - assets/clothes.svg
+    - assets/frying-pan.svg
+    - assets/paper.svg
+    - assets/plastic.svg
+    - assets/vodka.svg
   # fonts:
   #   - family: Schyler
   #     fonts:

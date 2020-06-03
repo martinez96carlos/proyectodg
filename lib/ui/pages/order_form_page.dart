@@ -63,10 +63,11 @@ class _Body extends StatelessWidget {
         Expanded(child: _GeneralInformation()),
         InkWell(
           onTap: () async {
-            await alerts.createOrderAlert(context);
-            print("ingresa al timer con valor :" +
-                controllers.stillCreateOrder.toString());
-            timer(context);
+            if (await alerts.createOrderAlert(context)) {
+              print("ingresa al timer con valor :" +
+                  controllers.stillCreateOrder.toString());
+              timer(context);
+            }
           },
           child: Container(
             width: double.infinity,

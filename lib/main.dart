@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:waste_collection_app/data/providers/charts_provider.dart';
 import 'package:waste_collection_app/data/providers/controllers_provider.dart';
 import 'package:waste_collection_app/data/providers/login_providers.dart';
 import 'package:waste_collection_app/data/providers/orders_provider.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ControllersProvider()),
         ChangeNotifierProvider(create: (context) => OrdersProviders()),
         ChangeNotifierProvider(create: (context) => RecolectionsProvider()),
+        ChangeNotifierProvider(create: (context) => ChartsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

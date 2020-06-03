@@ -111,7 +111,8 @@ class Home extends StatelessWidget {
                         Icon(Icons.edit, color: Theme.of(context).primaryColor),
                     onPressed: () {
                       Navigator.pushNamed(context, 'register_form',
-                          arguments: RegisterFormArguments(edit: true));
+                          arguments: RegisterFormArguments(
+                              edit: true, generator: user.userType));
                     },
                   )
                 : Container(),

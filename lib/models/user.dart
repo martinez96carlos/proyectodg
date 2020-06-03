@@ -138,19 +138,19 @@ class RecolectorUser extends User {
 
   factory RecolectorUser.fromJson(Map<String, dynamic> json) {
     return RecolectorUser(
-      date: json['recolector_born_date'],
-      dni: json['recolector_ci'],
-      email: json['recolector_email'],
-      gender: json['recolector_gender'],
-      imageLink: json['recolector_picture_url'],
-      name: json['recolector_first_name'],
-      lastName: json['recolector_first_lastname'],
-      phone: json['recolector_phone'],
-      city: json['recolector_city'],
-      secondLastName: json['generator_second_lastname'],
-      secondName: json['generator_second_name'],
-      id: json['recolector_id'],
-    );
+        date: json['recolector_born_date'],
+        dni: json['recolector_ci'],
+        email: json['recolector_email'],
+        gender: json['recolector_gender'],
+        imageLink: json['recolector_picture_url'],
+        name: json['recolector_first_name'],
+        lastName: json['recolector_first_lastname'],
+        phone: json['recolector_phone'],
+        city: json['recolector_city'],
+        secondLastName: json['recolector_second_lastname'],
+        secondName: json['recolector_second_name'],
+        id: json['recolector_id'],
+        rate: json['recolector_rate'] / 1);
   }
 }
 

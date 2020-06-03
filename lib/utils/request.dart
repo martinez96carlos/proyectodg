@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:waste_collection_app/data/constant.dart' as constant;
 import 'package:waste_collection_app/data/database/dbHelper.dart';
+import 'package:waste_collection_app/data/providers/charts_provider.dart';
 import 'package:waste_collection_app/data/providers/orders_provider.dart';
 import 'package:waste_collection_app/data/providers/recolections_provider.dart';
 import 'package:waste_collection_app/data/providers/user_providers.dart';
+import 'package:waste_collection_app/models/charts_model.dart';
 import 'package:waste_collection_app/models/orders.dart';
 import 'package:waste_collection_app/models/recolections.dart';
 import 'package:waste_collection_app/models/user.dart';
@@ -33,44 +35,51 @@ Future<bool> login(
           }).timeout(Duration(seconds: 10));
       print("decode: " + response.body);
       var decode = json.decode(response.body);
-      if (decode['generator']) {
-        GeneratorUser generator = GeneratorUser.fromJson(decode);
-        User user = User(
-            date: generator.date,
-            rate: generator.rate,
-            id: generator.id,
-            secondName: generator.secondName,
-            dni: generator.dni,
-            secondLastName: generator.secondLastName,
-            email: generator.email,
-            gender: generator.gender,
-            imageLink: generator.imageLink,
-            lastName: generator.lastName,
-            name: generator.name,
-            phone: generator.phone);
-        userProvider.generatorUser = generator;
-        userProvider.user = user;
-        userProvider.userType = true;
-        return true;
+      if (decode.toString() == "Password mala") {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text('Contraseña incorrecta'),
+        ));
+        return false;
       } else {
-        RecolectorUser generator = RecolectorUser.fromJson(decode);
-        User user = User(
-            date: generator.date,
-            rate: generator.rate,
-            id: generator.id,
-            secondName: generator.secondName,
-            dni: generator.dni,
-            secondLastName: generator.secondLastName,
-            email: generator.email,
-            gender: generator.gender,
-            imageLink: generator.imageLink,
-            lastName: generator.lastName,
-            name: generator.name,
-            phone: generator.phone);
-        userProvider.recolectorUser = generator;
-        userProvider.user = user;
-        userProvider.userType = false;
-        return true;
+        if (decode['generator']) {
+          GeneratorUser generator = GeneratorUser.fromJson(decode);
+          User user = User(
+              date: generator.date,
+              rate: generator.rate,
+              id: generator.id,
+              secondName: generator.secondName,
+              dni: generator.dni,
+              secondLastName: generator.secondLastName,
+              email: generator.email,
+              gender: generator.gender,
+              imageLink: generator.imageLink,
+              lastName: generator.lastName,
+              name: generator.name,
+              phone: generator.phone);
+          userProvider.generatorUser = generator;
+          userProvider.user = user;
+          userProvider.userType = true;
+          return true;
+        } else {
+          RecolectorUser generator = RecolectorUser.fromJson(decode);
+          User user = User(
+              date: generator.date,
+              rate: generator.rate,
+              id: generator.id,
+              secondName: generator.secondName,
+              dni: generator.dni,
+              secondLastName: generator.secondLastName,
+              email: generator.email,
+              gender: generator.gender,
+              imageLink: generator.imageLink,
+              lastName: generator.lastName,
+              name: generator.name,
+              phone: generator.phone);
+          userProvider.recolectorUser = generator;
+          userProvider.user = user;
+          userProvider.userType = false;
+          return true;
+        }
       }
     } on TimeoutException catch (e) {
       print('Excepcion: ' + e.toString());
@@ -80,7 +89,7 @@ Future<bool> login(
       ));
       return false;
     } catch (e) {
-      print('Excepcion: ' + e.toString());
+      print('Excepcion login: ' + e.toString());
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Ah ocurrido un error, vuelva a intentarlo'),
       ));
@@ -149,7 +158,7 @@ Future<bool> registerRecolector(
       final _body = jsonEncode({
         'recolector_first_name': '${user.name}',
         'recolector_second_name': '${user.secondName}',
-        'recolector_first_lastname': '${user.secondName}',
+        'recolector_first_lastname': '${user.lastName}',
         'recolector_second_lastname': '${user.secondLastName}',
         'recolector_born_date': '${user.date}',
         'recolector_gender': user.gender,
@@ -159,6 +168,7 @@ Future<bool> registerRecolector(
         'recolector_ci': '${user.dni}',
         'recolector_city': user.city
       });
+      print(_body);
       var response = await http
           .post(Uri.encodeFull("${constant.urlBase}/createre"),
               headers: {"content-type": "application/json"}, body: _body)
@@ -208,6 +218,7 @@ Future<bool> editGenerator(
         'generator_ci': '${user.dni}',
         'generator_picture_url': ''
       });
+      print(_body);
       var response = await http
           .put(Uri.encodeFull("${constant.urlBase}/editge"),
               headers: {
@@ -250,7 +261,7 @@ Future<bool> editRecolector(
       final _body = jsonEncode({
         'recolector_first_name': '${user.name}',
         'recolector_second_name': '${user.secondName}',
-        'recolector_first_lastname': '${user.secondName}',
+        'recolector_first_lastname': '${user.lastName}',
         'recolector_second_lastname': '${user.secondLastName}',
         'recolector_born_date': '${user.date}',
         'recolector_gender': user.gender,
@@ -261,6 +272,7 @@ Future<bool> editRecolector(
         'recolector_city': user.city,
         'recolector_picture_url': ''
       });
+      print(_body);
       var response = await http
           .put(Uri.encodeFull("${constant.urlBase}/editre"),
               headers: {
@@ -515,7 +527,7 @@ Future<bool> getSolids({@required BuildContext context}) async {
             Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
       ));
     } catch (e) {
-      print('Excepcion: ' + e.toString());
+      print('Excepcion get solids: ' + e.toString());
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text('Ah ocurrido un error, vuelva a intentarlo'),
       ));
@@ -757,6 +769,313 @@ Future<bool> getRateOrder(
       order.changeRate(data['order_rate'], int.parse(id), 2);
       await db.updateStatusOrder(order.orderActive.id, 2);
       await db.updateRateOrder(order.orderActive.id, order.orderActive.rate);
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+//Estadisticas
+
+Future<bool> getVolumeByGeneralOrder({@required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/gone"))
+          .timeout(Duration(seconds: 5));
+      print("global one: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['tipo_residuo'], y: double.parse(element['volumen'])));
+      });
+      charts.gone = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getVolumeByCity({@required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/gfour"))
+          .timeout(Duration(seconds: 5));
+      print("global two: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['city'],
+            y: double.parse(element['volumen']),
+            text: '${element['city']}\n${element['volumen']}'));
+      });
+      charts.gtwo = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getTopFiveRecolectors({@required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/gfive"))
+          .timeout(Duration(seconds: 5));
+      print("global three: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['concat'], y: double.parse(element['volumen'])));
+      });
+      charts.gthree = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getVolumeByMonth({@required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/gthree"))
+          .timeout(Duration(seconds: 5));
+      print("global four: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['Mes'], y: double.parse(element['volumen'])));
+      });
+      charts.gfour = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getVolumeByResidenceType({@required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/gtwo"))
+          .timeout(Duration(seconds: 5));
+      print("global five: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['generator_place'],
+            y: double.parse(element['volumen'])));
+      });
+      charts.gfive = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+//PERSONAL
+
+Future<bool> getVolumeByPersonalOrder(
+    {@required String id, @required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/pone/$id"))
+          .timeout(Duration(seconds: 5));
+      print("personal one: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['tipo_residuo'], y: double.parse(element['volumen'])));
+      });
+      charts.pone = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getVolumeByPersonalMonth(
+    {@required String id, @required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/pthree/$id"))
+          .timeout(Duration(seconds: 5));
+      print("personal two: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['Mes'], y: double.parse(element['volumen'])));
+      });
+      charts.ptwo = aux;
+      return true;
+    } on TimeoutException catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content:
+            Text('Esto esta demorando bastante, vuelva a intentarlo mas tarde'),
+      ));
+    } catch (e) {
+      print('Excepcion: ' + e.toString());
+      scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+        content: Text('Ah ocurrido un error, vuelva a intentarlo'),
+      ));
+      return false;
+    }
+  } else {
+    scaffoldHomeKey.currentState.showSnackBar(SnackBar(
+      content: Text('No hay conexión a internet'),
+    ));
+  }
+  return false;
+}
+
+Future<bool> getVolumeByPersonalResidence(
+    {@required String id, @required BuildContext context}) async {
+  if (await configure.checkInternet()) {
+    final charts = Provider.of<ChartsProvider>(context, listen: false);
+    List<ChartSampleData> aux = [];
+    try {
+      var response = await http
+          .get(Uri.encodeFull("${constant.urlBase}/ptwo/$id"))
+          .timeout(Duration(seconds: 5));
+      print("personal three: " + response.body);
+      var data = json.decode(response.body) as List;
+      data.forEach((element) {
+        aux.add(ChartSampleData(
+            x: element['generator_place'],
+            y: double.parse(element['volumen'])));
+      });
+      charts.pthree = aux;
       return true;
     } on TimeoutException catch (e) {
       print('Excepcion: ' + e.toString());
