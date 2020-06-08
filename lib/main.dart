@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
           'order_details': (context) => OrdersDetailsPage(),
           'order_form': (context) => OrdersFormPage(),
         },
-        title: 'Waste app',
+        title: 'Recoin',
         theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity),

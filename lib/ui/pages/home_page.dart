@@ -139,7 +139,7 @@ class Home extends StatelessWidget {
                   )
                 : Container(),
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: Icon(Icons.replay),
               onPressed: () async {
                 var dbHelper = DBHelper();
                 controllers.isLoading = true;
